@@ -20,6 +20,7 @@ def admin_token():
     assert json_response.get('status') == 'SUCCESS'
     return json_response.get('data').get('api_token')
 
+
 @pytest.fixture
 def driver(admin_token):
     json_response = create_driver(admin_token)
@@ -31,13 +32,13 @@ def driver(admin_token):
 
 
 @pytest.fixture
-def create_driver_2(admin_token):
+def driver2(admin_token):
     json_response = create_driver(admin_token)
     assert json_response.get('status') == 'SUCCESS'
     if json_response.get('status') == 'SUCCESS':
         print('\nDriver2 ==> {} <== has been created successfully'.format(
             json_response.get('data').get('email')))
-    return json_response('data')
+    return json_response.get('data')
 
 
 def test_create_driver(admin_token):
@@ -84,6 +85,7 @@ def test_driver_status_change(driver):
         print('Driver ==> {} <== status has been successfully changed into Available'.format(
             driver_email))
 
+
 def test_driver_location(admin_token, driver):
     driver_email = driver.get('email')
     driver_password = constants.PASSWORD
@@ -111,7 +113,7 @@ def test_driver_location(admin_token, driver):
         if area == 'Out':
             for id in company_areas_json[area]:
                 if str(id) == str(login_data.get('data').get('id')):
-                    founded_out = True                    
+                    founded_out = True
                     break
 
     assert founded_out == True
@@ -155,104 +157,60 @@ def test_driver_location(admin_token, driver):
             driver_email, new_area_name))
 
 
-# def test_drivers_area_order(create_driver, create_driver_2, admin_token):
-#     driver_1_email = create_driver['email']
-#     driver_1_password = 123456
+def test_drivers_area_order(driver, driver2, admin_token):
+    driver1_email = driver.get('email')
+    driver1_password = 123456
 
-#     driver_2_email = create_driver_2['email']
-#     driver_2_password = 123456
+    driver2_email = driver2.get('email')
+    driver2_password = 123456
 
-#     driver_1_login_payload = {
-#         "type": "Driver",
-#         "email": driver_1_email,
-#         "password": driver_1_password
-#     }
-#     url = 'https://taxi3.rytalo.com/api/authenticate/login'
-#     driver_1_login_response = requests.post(url, data=driver_1_login_payload)
-#     driver_1_login_json = json.loads(driver_1_login_response.text)
-#     assert driver_1_login_json['status'] == "SUCCESS"
-#     assert driver_1_login_json['data']['status'] == 'Away-Off'
-#     print('Driver ==> {} <== status confirmed Away-Off after first login'.format(
-#         driver_1_email))
+    driver1_login_json = login("Driver", driver1_email, driver1_password)
+    assert driver1_login_json['status'] == "SUCCESS"
+    if driver1_login_json['data']['status'] == 'Away-Off':
+        print('Driver ==> {} <== status confirmed Away-Off after first login'.format(
+            driver1_email))
 
-#     driver_1_token = driver_1_login_json['data']['api_token']
-#     print('driver_1_token: ', driver_1_token)
-#     driver_1_change_status_params = {
-#         'token': driver_1_token,
-#         'driver_status': 'Available'
-#     }
-#     change_status_url = 'https://taxi3.rytalo.com/api/taxi3/driver/status/'
+    driver1_token = driver1_login_json['data']['api_token']
+    print('driver1_token: ', driver1_token)
 
-#     '''take care that here we are calling change status api twice in order to be able to change status'''
-#     change_status_response = requests.get(
-#         change_status_url, params=driver_1_change_status_params)
-#     change_status_json = json.loads(change_status_response.text)
+    '''take care that here we are calling change status api twice in order to be able to change status'''
+    change_status_json = update_status(driver1_token, "Available")
+    change_status_json = update_status(driver1_token, "Available")
+    assert change_status_json['status'] == "SUCCESS"
+    if change_status_json['status'] == "SUCCESS":
+        print('Driver ==> {} <== status has been successfully changed into Available'.format(
+            driver1_email))
 
-#     change_status_response = requests.get(
-#         change_status_url, params=driver_1_change_status_params)
-#     change_status_json = json.loads(change_status_response.text)
+    driver2_login_json = login("Driver", driver2_email, driver2_password)
+    assert driver2_login_json['status'] == "SUCCESS"
+    if driver2_login_json['data']['status'] == 'Away-Off':
+        print('Driver ==> {} <== status confirmed Away-Off after first login'.format(
+            driver2_email))
 
-#     assert change_status_json['status'] == "SUCCESS"
-#     print('Driver ==> {} <== status has been successfully changed into Available'.format(
-#         driver_1_email))
+    driver2_token = driver2_login_json['data']['api_token']
+    print('driver2_token: ', driver2_token)
 
-#     driver_2_login_payload = {
-#         "type": "Driver",
-#         "email": driver_2_email,
-#         "password": driver_2_password
-#     }
-#     url = 'https://taxi3.rytalo.com/api/authenticate/login'
-#     driver_2_login_response = requests.post(url, data=driver_2_login_payload)
-#     driver_2_login_json = json.loads(driver_2_login_response.text)
-#     assert driver_2_login_json['status'] == "SUCCESS"
-#     assert driver_2_login_json['data']['status'] == 'Away-Off'
-#     print('Driver ==> {} <== status confirmed Away-Off after first login'.format(
-#         driver_2_email))
+    '''take care that here we are calling change status api twice in order to be able to change status'''
+    change_status_json = update_status(driver2_token, "Available")
+    change_status_json = update_status(driver2_token, "Available")
+    assert change_status_json['status'] == "SUCCESS"
+    if change_status_json['status'] == "SUCCESS":
+        print('Driver ==> {} <== status has been successfully changed into Available'.format(
+            driver2_email))
 
-#     driver_2_token = driver_2_login_json['data']['api_token']
-#     print('driver_1_token: ', driver_1_token)
+    point = {
+        "lat": 30.06657871622343,
+        "lng": 31.30840301513672
+    }
 
-#     driver_2_change_status_params = {
-#         'token': driver_2_token,
-#         'driver_status': 'Available'
-#     }
-#     change_status_url = 'https://taxi3.rytalo.com/api/taxi3/driver/status/'
+    driver1_tracking_json = update_location(driver1_token, point['lat'], point['lng'])
+    assert driver1_tracking_json['status'] == 'SUCCESS'
+    if driver1_tracking_json['status'] == 'SUCCESS':
+        print('Driver ==> {} <== location has been set successfully'.format(
+            driver1_email))
 
-#     '''take care that here we are calling change status api twice in order to be able to change status'''
-#     change_status_response = requests.get(
-#         change_status_url, params=driver_2_change_status_params)
-#     change_status_json = json.loads(change_status_response.text)
-
-#     change_status_response = requests.get(
-#         change_status_url, params=driver_2_change_status_params)
-#     change_status_json = json.loads(change_status_response.text)
-
-#     assert change_status_json['status'] == "SUCCESS"
-#     print('Driver2 ==> {} <== status has been successfully changed into Available'.format(
-#         driver_2_email))
-
-#     nasr_city_lat_lng_params = {
-#         "lat": 30.06657871622343,
-#         "lng": 31.30840301513672
-#     }
-#     '''take care that here we are calling tracking api twice in order to be able to change location'''
-#     drive_tracking_url = 'https://taxi3.rytalo.com/api/taxi3/driver/track/'
-#     driver_1_tracking_response = requests.get(drive_tracking_url, params=nasr_city_lat_lng_params, headers={
-#         'Authorization': 'Bearer {}'.format(driver_1_token)})
-#     driver_1_tracking_response = requests.get(drive_tracking_url, params=nasr_city_lat_lng_params, headers={
-#         'Authorization': 'Bearer {}'.format(driver_1_token)})
-#     driver_1_tracking_json = json.loads(driver_1_tracking_response.text)
-#     assert driver_1_tracking_json['status'] == 'SUCCESS'
-#     print('Driver ==> {} <== location has been set successfully to nasr city area'.format(
-#         driver_1_email))
-
-#     '''take care that here we are calling tracking api twice in order to be able to change location'''
-#     drive_tracking_url = 'https://taxi3.rytalo.com/api/taxi3/driver/track/'
-#     driver_2_tracking_response = requests.get(drive_tracking_url, params=nasr_city_lat_lng_params, headers={
-#         'Authorization': 'Bearer {}'.format(driver_2_token)})
-#     driver_2_tracking_response = requests.get(drive_tracking_url, params=nasr_city_lat_lng_params, headers={
-#         'Authorization': 'Bearer {}'.format(driver_2_token)})
-#     driver_2_tracking_json = json.loads(driver_2_tracking_response.text)
-#     assert driver_2_tracking_json['status'] == 'SUCCESS'
-#     print('Driver ==> {} <== location has been set successfully to nasr city area'.format(
-#         driver_2_email))
+    driver2_tracking_json = update_location(driver2_token, point['lat'], point['lng'])
+    assert driver2_tracking_json['status'] == 'SUCCESS'
+    if driver2_tracking_json['status'] == 'SUCCESS':
+        print('Driver ==> {} <== location has been set successfully'.format(
+            driver2_email))

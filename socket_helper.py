@@ -22,6 +22,7 @@ def start_socket(token):
         def on_dispatch(*args):
             message = args[0]
             booking = message.get("booking")
+            socketIO.disconnect()
             print("New Booking {}".format(booking))
 
             seen = see_booking(booking.get("id"), token)

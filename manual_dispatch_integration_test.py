@@ -64,17 +64,17 @@ def test(driver, customer):
     ''' take care here we are hitting status response twice for a reason '''
     status_response = update_status(driver_token, 'Available')
     status_response = update_status(driver_token, 'Available')
-    print(status_response)
     assert status_response.get('status') == "SUCCESS"
     if status_response.get('status') == "SUCCESS":
       print('Driver status changed to Available')
 
     init_socket(driver_token)
-
+    time.sleep(5)
     booking_json = create_booking(customer_token)
     assert booking_json.get('status') == 'SUCCESS'
     company_id = booking_json.get('data').get('company_id')
     booking_id = booking_json.get('data').get('id')
     driver_id = driver.get('id')
-    dispatch_booking(company_id, booking_id, driver_id)
-
+    # time.sleep(5)
+    dispatch_json = dispatch_booking(company_id, booking_id, driver_id)
+    print(dispatch_json)
