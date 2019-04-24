@@ -172,7 +172,7 @@ def confirm_booking(booking_id, token):
 
     response = requests.get(url, headers=headers, params=querystring)
 
-    print("Confirm response: {}".format(response.text))
+    return json.loads(response.text)
 
 
 def start_booking(booking_id, token):
@@ -187,7 +187,7 @@ def start_booking(booking_id, token):
 
     response = requests.get(url, headers=headers, params=querystring)
 
-    print("Start response: {}".format(response.text))
+    return json.loads(response.text)
 
 
 def wait_for_passanger(booking_id, token):
@@ -201,7 +201,7 @@ def wait_for_passanger(booking_id, token):
 
     response = requests.get(url, headers=headers, params=querystring)
 
-    print("Waiting for passanger response: {}".format(response.text))
+    return json.loads(response.text)
 
 
 def passenger_on_board(booking_id, token):
@@ -215,7 +215,7 @@ def passenger_on_board(booking_id, token):
 
     response = requests.get(url, headers=headers, params=querystring)
 
-    print("passanger on board response: {}".format(response.text))
+    return json.loads(response.text)
 
 
 def complete_booking(booking_id, token):
@@ -232,7 +232,7 @@ def complete_booking(booking_id, token):
 
     response = requests.post(url, data=payload, headers=headers, params=querystring)
 
-    print("Complete response: {}".format(response.text))
+    return json.loads(response.text)
 
 
 def update_random_point(token, status=None, ride_status=None, ride_id=None):
@@ -254,6 +254,4 @@ def update_random_point(token, status=None, ride_status=None, ride_id=None):
     }
 
     response = requests.get(url, headers=headers, params=querystring)
-    print("Update location response: {}".format(response.text))
-    resp = json.loads(response.text)
-    return resp.get("data")
+    return json.loads(response.text)

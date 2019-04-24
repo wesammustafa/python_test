@@ -70,11 +70,15 @@ def test(driver, customer):
 
     init_socket(driver_token)
     time.sleep(5)
+
     booking_json = create_booking(customer_token)
     assert booking_json.get('status') == 'SUCCESS'
     company_id = booking_json.get('data').get('company_id')
     booking_id = booking_json.get('data').get('id')
     driver_id = driver.get('id')
-    # time.sleep(5)
+    time.sleep(5)
     dispatch_json = dispatch_booking(company_id, booking_id, driver_id)
+    print(company_id)
+    print(booking_id)
+    print(driver_id)
     print(dispatch_json)
