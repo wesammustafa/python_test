@@ -230,7 +230,8 @@ def complete_booking(booking_id, token):
         'cache-control': "no-cache"
     }
 
-    response = requests.post(url, data=payload, headers=headers, params=querystring)
+    response = requests.post(
+        url, data=payload, headers=headers, params=querystring)
 
     return json.loads(response.text)
 
@@ -254,4 +255,91 @@ def update_random_point(token, status=None, ride_status=None, ride_id=None):
     }
 
     response = requests.get(url, headers=headers, params=querystring)
+    return json.loads(response.text)
+
+
+def create_area(admin_token):
+    random_number = randint(100000, 10000000)
+    payload = {
+        "name": "Area{}".format(random_number),
+        "company_id": 1,
+        "points": [
+            {"lat": 30.663766011567915, "lng": 30.206294059753418},
+            {"lat": 30.706282392106292, "lng": 30.651240348815918},
+            {"lat": 30.460374160870412, "lng": 30.936884880065918},
+            {"lat": 30.18060949697571, "lng": 30.739130973815918},
+            {"lat": 30.20434932635328, "lng": 30.222773551940918},
+            {"lat": 30.40353762878628, "lng": 30.244746208190918}],
+        "city_id": 1
+    }
+    url = 'http://grapes.mi-taxi.ca/taxi3/public/api/cms/v1/areas'
+    headers = {
+        'Authorization': 'Bearer {}'.format(admin_token),
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return json.loads(response.text)
+
+
+def get_area_redis(area_id, compnay_id):
+    url = 'https://taxi3.rytalo.com/api/taxi3/get_area/'
+    params = {
+        'area_id': area_id,
+        'company_id': compnay_id
+    }
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return json.loads(response.text)
+
+
+def create_car(admin_token):
+    random_number = randint(100000, 10000000)
+    payload = {
+        "name": 'car{}'.format(random_number),
+        "code": 'sd{}'.format(random_number),
+        "is_active": 1,
+        "car_type_id": '1',
+        "plate_number": str(random_number),
+        "model": "2016",
+        "company_id": 1,
+        "image": ""
+    }
+    url = 'http://grapes.mi-taxi.ca/taxi3/public/api/cms/v1/cars'
+    headers = {
+        'Authorization': 'Bearer {}'.format(admin_token),
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return json.loads(response.text)
+
+
+def get_car_redis(car_id, compnay_id):
+    url = 'https://taxi3.rytalo.com/api/taxi3/get_car/'
+    params = {
+        'car_id': car_id,
+        'company_id': compnay_id
+    }
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return json.loads(response.text)
+
+
+def get_driver_redis(driver_id, compnay_id):
+    url = 'https://taxi3.rytalo.com/api/taxi3/drivers/{}/?'.format(driver_id)
+    params = {
+        'company_id': compnay_id
+    }
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.get(url, headers=headers, params=params)
     return json.loads(response.text)

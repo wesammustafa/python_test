@@ -19,7 +19,8 @@ These instructions will get you ready for running testing scripts on your local 
 - Activate your virtual env
 - Install need packages using the command ``` pip install -r requirements.txt ```
 - Run all test scripts using the command ```pytest -v -s```
-- Run specific script using the command ```pytest::[script name] -v -s```
+- Run specific script using the command ```pytest [script name] -v -s```
+- Run specific test using the command ```pytest [script name]::[test name] -v -s```
 
 Note:
   - please, don't forget to put the abbreviations ```-v -s``` in the previous command
