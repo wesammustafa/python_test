@@ -343,3 +343,62 @@ def get_driver_redis(driver_id, compnay_id):
     }
     response = requests.get(url, headers=headers, params=params)
     return json.loads(response.text)
+
+def create_car_type(admin_token, company_id, passengers_count):
+    random_number = randint(1, 1000)
+    payload = {
+        "name": 'car type {}'.format(random_number),
+        "company_id": company_id,
+        "passengers": passengers_count,
+        "icon": ''
+    }
+    url = 'http://grapes.mi-taxi.ca/taxi3/public/api/cms/v1/car-types'
+    headers = {
+        'Authorization': 'Bearer {}'.format(admin_token),
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return json.loads(response.text)
+
+
+def get_car_type(car_type_id):
+    url = 'https://taxi3.rytalo.com/api/taxi3/get-global-car-type/'
+    params = {
+        'car_type_id': car_type_id
+    }
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return json.loads(response.text)
+
+def create_company_car_type(admin_token, car_type_id, company_id):
+    random_number = randint(1, 1000)
+    payload = {
+        "car_type_id": car_type_id,
+        "name": 'van{}'.format(random_number),
+        "company_id": company_id
+    }
+    url = 'http://grapes.mi-taxi.ca/taxi3/public/api/cms/v1/company-car-types'
+    headers = {
+        'Authorization': 'Bearer {}'.format(admin_token),
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return json.loads(response.text)
+
+def get_company_car_type(car_type_id, company_id):
+    url = 'https://taxi3.rytalo.com/api/taxi3/get-company-car-type/'
+    params = {
+        'car_type_id': car_type_id,
+        'company_id': company_id
+    }
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return json.loads(response.text)
